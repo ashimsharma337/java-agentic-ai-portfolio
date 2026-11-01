@@ -5,6 +5,8 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 public interface TeluskoSupport {
+
+	// String explain(String topic);
 	
 	@SystemMessage(
             """
@@ -13,6 +15,6 @@ public interface TeluskoSupport {
             Always provide a small example.
             """
     )
-    @UserMessage("Explain {{topic}} with a simple example! only defination short")
+    @UserMessage("Explain {{topic}} with a simple example! only definition short")
 	String explain(@V("topic")String topic);
 }
