@@ -1,6 +1,9 @@
 package com.ashim.llm_call_springai.web;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.metadata.ChatResponseMetadata;
+import org.springframework.ai.chat.metadata.Usage;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +40,30 @@ public class ChatController {
 		.call()
 		.content();
 	}
+	
+	@GetMapping("/metadata")
+	public UsageInfo chatModelMetaData(@RequestParam String message) {
+		
+		ChatResponse response = chatClient.prompt()
+		.system("You are a Java expert. Keep answer short in 2 lines and also answer only tech related question")
+		.user(message)
+		.call()
+		.chatResponse();
+		
+		ChatResponseMetadata metadata = response.getMetadata();
+		Usage usage = metadata.getUsage();
+		
+		return new UsageInfo(response.getResult().getOutput().getText(),
+				metadata.getModel(),
+				usage.getPromptTokens(),
+				usage.getCompletionTokens(),
+				usage.getTotalTokens());
+	}
+	
+    public record UsageInfo(String answer, String model, 
+            Integer inputTokens, Integer outputTokens, Integer totalTokens) {
+	
+	
+    }
 
 }
